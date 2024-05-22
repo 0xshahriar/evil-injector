@@ -1,6 +1,7 @@
 # Evil Injector 😈
 Evil Injector is a automated tool for checking host header injection vulnerability. Evil Injector works with domains only. Please before you start the tool, make sure in your file there is only domains. For example, ```www.google.com```,```images.google.com```.
 
+<img src="Evil-Injector.jpg">
 # How To Use
 ## For using the bash script:
 ```bash
