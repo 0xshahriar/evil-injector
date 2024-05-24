@@ -11,7 +11,7 @@ check_for_evil() {
         # Check response headers
         if [ "$header_flag" -eq 0 ]; then
             if [[ "$line" =~ "evil.com" ]]; then
-                echo -e "${RED}Host header injection has been found on $domain${NC}"
+                echo -e "${RED}Possible host header injection on : $domain${NC}"
                 return 0
             fi
             # Check if response headers end
