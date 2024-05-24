@@ -4,12 +4,26 @@
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# Function to check if "evil.com" is present in the response headers
+# Function to check if "evil.com" is present in the response headers or body
 check_for_evil() {
+    local header_flag=0
     while IFS= read -r line; do
-        if [[ "$line" =~ "evil.com" ]]; then
-            echo -e "${RED}Host header injection has been found on $domain${NC}"
-            return 0
+        # Check response headers
+        if [ "$header_flag" -eq 0 ]; then
+            if [[ "$line" =~ "evil.com" ]]; then
+                echo -e "${RED}Host header injection has been found on $domain${NC}"
+                return 0
+            fi
+            # Check if response headers end
+            if [ -z "$line" ]; then
+                header_flag=1
+            fi
+        else
+            # Check response body
+            if [[ "$line" =~ "evil.com" ]]; then
+                echo -e "${RED}Host header injection has been found in the response body of $domain${NC}"
+                return 0
+            fi
         fi
     done
     return 1
@@ -46,12 +60,18 @@ current_domain=0
 # Read each domain from the text file
 while IFS= read -r domain; do
     ((current_domain++))
-    # Add "https://" before the domain
-    url="https://$domain"
     
-    # Perform silent curl with custom headers (X-Forwarded-Host) and check for "evil.com" in response headers
+    # Check if the domain already contains "http://" or "https://"
+    if [[ "$domain" == "http://"* || "$domain" == "https://"* ]]; then
+        url="$domain"
+    else
+        # Otherwise, add "https://" before the domain
+        url="https://$domain"
+    fi
+
+    # Perform silent curl with custom headers (X-Forwarded-Host) and check for "evil.com" in response headers and body
     echo -ne "Processing domain $current_domain/$total_domains\r"
-    if curl -s -S -i -H "X-Forwarded-Host: evil.com" "$url" | check_for_evil; then
+    if curl -s -S -i --insecure -H "X-Forwarded-Host: evil.com" "$url" | check_for_evil; then
         continue
     fi
 done < "$domain_file"
