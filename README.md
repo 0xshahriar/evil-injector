@@ -1,5 +1,5 @@
 # Evil Injector 😈
-Evil Injector is a automated tool for checking host header injection vulnerability. Evil Injector works with domains only. Please before you start the tool, make sure in your file there is only domains. For example, ```www.google.com```,```images.google.com```.
+Evil Injector is a automated tool for checking host header injection vulnerability.
 
 <img src="Evil-Injector.jpg">
 
@@ -9,7 +9,7 @@ Evil Injector is a automated tool for checking host header injection vulnerabili
 chmod +x evil-injector.sh
 ```
 ```bash
-./evil-injector.sh your_domain_list.txt
+./evil-injector.sh file.txt
 ```
 
 ## For using the golang script:
